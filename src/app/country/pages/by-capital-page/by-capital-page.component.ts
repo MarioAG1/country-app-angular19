@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CountrySearchInput } from '../../components/search-input/search-input.component';
+import { CountrySearchInput } from '../../components/country-search-input/search-input.component';
 import { ListComponent } from '../../components/list/list.component';
 
 @Component({
@@ -12,4 +12,3 @@ export class ByCapitalPageComponent {
     console.log(value);
   }
 }
-//
