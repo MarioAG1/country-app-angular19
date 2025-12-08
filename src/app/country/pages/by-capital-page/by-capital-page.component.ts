@@ -12,3 +12,4 @@ export class ByCapitalPageComponent {
     console.log(value);
   }
 }
+//
