@@ -5,7 +5,7 @@ import { Component, input, output } from '@angular/core';
   imports: [],
   templateUrl: './search-input.component.html',
 })
-export class CountrySearchInput {
+export class SearchInputComponent {
   value = output<string>();
   placeholder = input<string>();
 
