@@ -2,4 +2,5 @@
   placeholder="Buscar por capital de mi pais"
   (value)="onSearch($event)"
 ></country-search-input>
-<country-list></country-list>
+<!-- 4 Lo agregamos a componente -->
+<country-list [countries]="countries()"></country-list>
