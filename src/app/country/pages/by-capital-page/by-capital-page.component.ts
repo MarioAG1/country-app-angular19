@@ -3,6 +3,7 @@ import { SearchInputComponent } from '../../components/search-input/search-input
 import { CountryListComponent } from '../../components/list/country-list.component';
 import { CountryService } from '../../services/country.service';
 import { RESTCountry } from '../../interfaces/rest-countries.interface';
+import { Country } from '../../interfaces/country.interface';
 
 @Component({
   selector: 'app-by-capital-page',
@@ -15,7 +16,8 @@ export class ByCapitalPageComponent {
   isError = signal<string | null>(null);
 
   // 1 Cambiamos a tipo RestCountry igual que el servicio, para evitar el error de asignar argumentos
-  countries = signal<RESTCountry[]>([]);
+  // Tarea Mapper, cambiamos el RestCountry por la interfaz neustra
+  countries = signal<Country[]>([]);
 
   onSearch(query: string) {
     if (this.isLoading() === true) {

@@ -1,6 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { RESTCountry } from '../interfaces/rest-countries.interface';
+import { map, Observable } from 'rxjs';
+import { Country } from '../interfaces/country.interface';
+import { CountryMapper } from '../mappers/country.mapper';
 
 const API_URL = 'https://restcountries.com/v3.1';
 
@@ -10,10 +13,18 @@ const API_URL = 'https://restcountries.com/v3.1';
 export class CountryService {
   private http = inject(HttpClient);
 
-  searchByCapital(query: string) {
+  searchByCapital(query: string): Observable<Country[]> {
     query = query.toLowerCase();
 
     // 2 Hacemos que el tipo de retorno sea igual a RESTCounty y a la vez lo cambiamos en el by-capital-page.ts
-    return this.http.get<RESTCountry[]>(`${API_URL}/capital/${query}`);
+    return this.http.get<RESTCountry[]>(`${API_URL}/capital/${query}`).pipe(
+      // Tarea Mapper, con esto pasamos la informacion de la API hacia nuestra interfaz en vez de consumirla directamente
+      //
+      // Lo mismo, se puede evitar la referencia
+      // map((restCountries) =>
+      //   CountryMapper.mapRestCountryToCountryArray(restCountries)
+      // )
+      map((resp) => CountryMapper.mapRestCountryToCountryArray(resp))
+    );
   }
 }
