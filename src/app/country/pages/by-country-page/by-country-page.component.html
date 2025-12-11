@@ -1,4 +1,11 @@
 <country-search-input
-  placeholder="Buscar por capital de mi pais"
+  placeholder="Buscar por pais"
+  (value)="query.set($event)"
 ></country-search-input>
-<country-list [countries]="[]"></country-list>
+
+<!-- 126 Tarea Pais -->
+@if (countryResource.error()) {
+<h3>{{ countryResource.error() }}</h3>
+} @if(countryResource.hasValue()) {
+<country-list [countries]="countryResource.value()!"></country-list>
+}

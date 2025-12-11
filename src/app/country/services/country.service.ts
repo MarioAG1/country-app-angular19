@@ -33,4 +33,22 @@ export class CountryService {
       })
     );
   }
+
+  // 126. Tarea Pais
+  searchByCountry(query: string): Observable<Country[]> {
+    query = query.toLowerCase();
+
+    // Si lo hacemos asi, recibimos parte del contenido, pero banderas y nombres apareceran como object object
+    // return this.http.get<Country[]>(`${API_URL}/name/${query}`);
+
+    return this.http.get<RESTCountry[]>(`${API_URL}/name/${query}`).pipe(
+      map((resp) => CountryMapper.mapRestCountryToCountryArray(resp)),
+      catchError((error) => {
+        console.log('Error fetching', error);
+        return throwError(
+          () => new Error(`No se puedo obtener paises con esa ${query}`)
+        );
+      })
+    );
+  }
 }
