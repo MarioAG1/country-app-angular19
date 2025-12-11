@@ -9,7 +9,7 @@ export class CountryMapper {
       cca2: restCountry.cca2,
       flag: restCountry.flag,
       flagSvg: restCountry.flags.svg,
-      name: restCountry.name.common,
+      name: restCountry.translations['spa'].common ?? 'No Spanish Name',
       //   capital: country.capital?.[0] ?? '', //La primera capital o vacio
       capital: restCountry.capital.join(','), //Poner ambas capitales
       population: restCountry.population,

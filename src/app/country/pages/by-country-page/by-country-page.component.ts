@@ -4,7 +4,7 @@ import { CountryListComponent } from '../../components/list/country-list.compone
 
 @Component({
   selector: 'app-by-country-page',
-  imports: [SearchInputComponent],
+  imports: [SearchInputComponent, CountryListComponent],
   templateUrl: './by-country-page.component.html',
 })
 export class ByCountryPageComponent {}
