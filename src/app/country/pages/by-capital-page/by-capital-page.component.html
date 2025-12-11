@@ -2,5 +2,10 @@
   placeholder="Buscar por capital de mi pais"
   (value)="onSearch($event)"
 ></country-search-input>
+
+@if (isError()) {
+<h3>{{ isError() }}</h3>
+} @else {
 <!-- 4 Lo agregamos a componente -->
 <country-list [countries]="countries()"></country-list>
+}
