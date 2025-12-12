@@ -1,10 +1,9 @@
 import { Component, inject, resource, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { firstValueFrom, of } from 'rxjs';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
 import { CountryListComponent } from '../../components/list/country-list.component';
 import { CountryService } from '../../services/country.service';
-import { RESTCountry } from '../../interfaces/rest-countries.interface';
-import { Country } from '../../interfaces/country.interface';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-by-capital-page',
@@ -13,20 +12,33 @@ import { firstValueFrom } from 'rxjs';
 })
 export class ByCapitalPageComponent {
   countryService = inject(CountryService);
-
-  // 125. Esto remplazaria todo lo de abajo
   query = signal('');
-  countryResource = resource({
+
+  // Version Observables, en versiones 20 de Angular
+  // se cambia request por params y loader por stream
+  countryResource = rxResource({
     request: () => ({ query: this.query() }),
-    loader: async ({ request }) => {
-      if (!request.query) {
-        return [];
-      }
-      return await firstValueFrom(
-        this.countryService.searchByCapital(request.query)
-      );
+    loader: ({ request }) => {
+      if (!request.query) return of([]);
+      return this.countryService.searchByCapital(request.query);
     },
   });
+
+  // Esta funcionalidad se basa en Resources con Promesas,
+  // ahora lo haremos con Observables arriba, ambas opciones estan bien
+
+  // 125. Esto remplazaria todo lo de abajo
+  // countryResource = resource({
+  //   request: () => ({ query: this.query() }),
+  //   loader: async ({ request }) => {
+  //     if (!request.query) {
+  //       return [];
+  //     }
+  //     return await firstValueFrom(
+  //       this.countryService.searchByCapital(request.query)
+  //     );
+  //   },
+  // });
 
   // isLoading = signal(false);
   // isError = signal<string | null>(null);
