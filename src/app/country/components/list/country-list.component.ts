@@ -12,4 +12,8 @@ export class CountryListComponent {
   //3 Hacemos el input, es decir los datos que le tienen que llegar
   //Tarea Mapper, cambiamos el RestCountry, por nuestra interfaz
   countries = input.required<Country[]>();
+
+  errorMessage = input<string | unknown>();
+  isLoading = input<boolean>(false);
+  isEmpty = input<boolean>(false);
 }
