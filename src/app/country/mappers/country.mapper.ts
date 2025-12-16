@@ -13,6 +13,8 @@ export class CountryMapper {
       //   capital: country.capital?.[0] ?? '', //La primera capital o vacio
       capital: restCountry.capital.join(','), //Poner ambas capitales
       population: restCountry.population,
+      region: restCountry.region,
+      subregion: restCountry.subregion,
     };
   }
 
