@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { RESTCountry } from '../interfaces/rest-countries.interface';
-import { catchError, delay, map, Observable, throwError } from 'rxjs';
+import { catchError, delay, map, Observable, of, tap, throwError } from 'rxjs';
 import { Country } from '../interfaces/country.interface';
 import { CountryMapper } from '../mappers/country.mapper';
 
@@ -12,9 +12,17 @@ const API_URL = 'https://restcountries.com/v3.1';
 })
 export class CountryService {
   private http = inject(HttpClient);
+  //Si hay intercacion con el DOM o la web y verse reflejado, se debe utilizar señales en este caso no
+  private queryCacheCapital = new Map<string, Country[]>(); // Objeto vacio
 
   searchByCapital(query: string): Observable<Country[]> {
     query = query.toLowerCase();
+
+    if (this.queryCacheCapital.has(query)) {
+      return of(this.queryCacheCapital.get(query) ?? []);
+    }
+
+    console.log('LLegando al servidor por ' + query);
 
     // 2 Hacemos que el tipo de retorno sea igual a RESTCounty y a la vez lo cambiamos en el by-capital-page.ts
     return this.http.get<RESTCountry[]>(`${API_URL}/capital/${query}`).pipe(
@@ -24,7 +32,9 @@ export class CountryService {
       // map((restCountries) =>
       //   CountryMapper.mapRestCountryToCountryArray(restCountries)
       // )
+
       map((resp) => CountryMapper.mapRestCountryToCountryArray(resp)),
+      tap((countries) => this.queryCacheCapital.set(query, countries)),
       delay(2000),
       catchError((error) => {
         console.log('Error fetching', error);
