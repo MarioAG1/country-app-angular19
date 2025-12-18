@@ -14,10 +14,12 @@ export class CountryService {
   private http = inject(HttpClient);
   //Si hay intercacion con el DOM o la web y verse reflejado, se debe utilizar señales en este caso no
   private queryCacheCapital = new Map<string, Country[]>(); // Objeto vacio
+  private queryCacheCountry = new Map<string, Country[]>(); // Objeto vacio
 
   searchByCapital(query: string): Observable<Country[]> {
     query = query.toLowerCase();
 
+    // Al poner of, lo tranforma a un observable y podemos poner .pipe con todo los datos
     if (this.queryCacheCapital.has(query)) {
       return of(this.queryCacheCapital.get(query) ?? []);
     }
@@ -49,11 +51,16 @@ export class CountryService {
   searchByCountry(query: string): Observable<Country[]> {
     query = query.toLowerCase();
 
+    if (this.queryCacheCountry.has(query)) {
+      return of(this.queryCacheCountry.get(query) ?? []);
+    }
+
     // Si lo hacemos asi, recibimos parte del contenido, pero banderas y nombres apareceran como object object
     // return this.http.get<Country[]>(`${API_URL}/name/${query}`);
 
     return this.http.get<RESTCountry[]>(`${API_URL}/name/${query}`).pipe(
       map((resp) => CountryMapper.mapRestCountryToCountryArray(resp)),
+      tap((countries) => this.queryCacheCountry.set(query, countries)),
       delay(2000),
       catchError((error) => {
         console.log('Error fetching', error);
