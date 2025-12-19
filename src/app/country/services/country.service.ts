@@ -4,6 +4,7 @@ import { RESTCountry } from '../interfaces/rest-countries.interface';
 import { catchError, delay, map, Observable, of, tap, throwError } from 'rxjs';
 import { Country } from '../interfaces/country.interface';
 import { CountryMapper } from '../mappers/country.mapper';
+import { Region } from '../interfaces/regions.interface';
 
 const API_URL = 'https://restcountries.com/v3.1';
 
@@ -15,6 +16,7 @@ export class CountryService {
   //Si hay intercacion con el DOM o la web y verse reflejado, se debe utilizar señales en este caso no
   private queryCacheCapital = new Map<string, Country[]>(); // Objeto vacio
   private queryCacheCountry = new Map<string, Country[]>(); // Objeto vacio
+  private queryCacheRegion = new Map<Region, Country[]>(); // Objeto vacio
 
   searchByCapital(query: string): Observable<Country[]> {
     query = query.toLowerCase();
@@ -41,7 +43,7 @@ export class CountryService {
       catchError((error) => {
         console.log('Error fetching', error);
         return throwError(
-          () => new Error(`No se puedo obtener paises con esa ${query}`)
+          () => new Error(`No se puedo obtener paises con ese ${query}`)
         );
       })
     );
@@ -65,7 +67,7 @@ export class CountryService {
       catchError((error) => {
         console.log('Error fetching', error);
         return throwError(
-          () => new Error(`No se puedo obtener paises con esa ${query}`)
+          () => new Error(`No se puedo obtener paises con ese ${query}`)
         );
       })
     );
@@ -81,7 +83,29 @@ export class CountryService {
       catchError((error) => {
         console.log('Error fetching', error);
         return throwError(
-          () => new Error(`No se puedo obtener paises con esa ${code}`)
+          () => new Error(`No se puedo obtener paises con ese ${code}`)
+        );
+      })
+    );
+  }
+
+  // 140. Tarea Regiones
+  // Camibamo el query: string, por que los datos que vamos a pasar ya estan escritos en la interfaz o type
+  searchByRegion(query: Region): Observable<Country[]> {
+    const url = `${API_URL}/region/${query}`;
+
+    if (this.queryCacheRegion.has(query)) {
+      return of(this.queryCacheRegion.get(query) ?? []);
+    }
+
+    return this.http.get<RESTCountry[]>(url).pipe(
+      map((resp) => CountryMapper.mapRestCountryToCountryArray(resp)),
+      tap((countries) => this.queryCacheRegion.set(query, countries)),
+      delay(2000),
+      catchError((error) => {
+        console.log('Error fetching', error);
+        return throwError(
+          () => new Error(`No se puedo las regiones de ${query}`)
         );
       })
     );

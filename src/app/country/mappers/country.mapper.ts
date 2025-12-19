@@ -11,7 +11,8 @@ export class CountryMapper {
       flagSvg: restCountry.flags.svg,
       name: restCountry.translations['spa'].common ?? 'No Spanish Name',
       //   capital: country.capital?.[0] ?? '', //La primera capital o vacio
-      capital: restCountry.capital.join(','), //Poner ambas capitales
+      // Ponemos capital?.join, por que a la hora de buscar regiones, Antarida y Asia esto da problemas
+      capital: restCountry.capital?.join(','), //Poner ambas capitales
       population: restCountry.population,
       region: restCountry.region,
       subregion: restCountry.subregion,

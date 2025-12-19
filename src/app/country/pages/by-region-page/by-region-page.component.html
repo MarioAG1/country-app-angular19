@@ -1,1 +1,24 @@
-<country-list [countries]="[]"></country-list>
+<!-- 140 Tarea Region -->
+<h1 class="text-2xl">Por Region</h1>
+<h3 class="text-lg">Seleccione una region</h3>
+<section class="row mt-2">
+  <div class="flex-col">
+    <!-- Con esto pasamos el el texto del html al TS y este hablara con el servicio con los datos dados -->
+    @for (region of regions; track region) {
+    <!-- Poner de color cual de los botones has puesto, linea 11 -->
+    <button
+      (click)="selectedRegion.set(region)"
+      [class.btn-primary]="selectedRegion() === region"
+      class="btn btn-outline mr-2"
+    >
+      {{ region }}
+    </button>
+    }
+  </div>
+</section>
+<country-list
+  [countries]="countryResource.value() ?? []"
+  [errorMessage]="countryResource.error()"
+  [isEmpty]="countryResource.value()?.length === 0"
+  [isLoading]="countryResource.isLoading()"
+></country-list>
