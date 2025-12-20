@@ -2,6 +2,7 @@
   placeholder="Buscar por pais"
   (value)="query.set($event)"
   [debounceTime]="300"
+  [initialValue]="query()"
 ></country-search-input>
 
 <country-list
