@@ -1,9 +1,16 @@
-import { Component, inject, resource, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  linkedSignal,
+  resource,
+  signal,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { firstValueFrom, of } from 'rxjs';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
 import { CountryListComponent } from '../../components/list/country-list.component';
 import { CountryService } from '../../services/country.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-by-capital-page',
@@ -12,13 +19,20 @@ import { CountryService } from '../../services/country.service';
 })
 export class ByCapitalPageComponent {
   countryService = inject(CountryService);
-  query = signal('');
+
+  //Para obtner datos a partir de la url
+  activatedRoute = inject(ActivatedRoute);
+  queryParam = this.activatedRoute.snapshot.queryParamMap.get('query') ?? '';
+
+  query = linkedSignal(() => this.queryParam);
 
   // Version Observables, en versiones 20 de Angular
   // se cambia request por params y loader por stream
   countryResource = rxResource({
     request: () => ({ query: this.query() }),
     loader: ({ request }) => {
+      console.log(request.query);
+
       if (!request.query) return of([]);
       return this.countryService.searchByCapital(request.query);
     },
