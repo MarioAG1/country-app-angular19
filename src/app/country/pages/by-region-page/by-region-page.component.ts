@@ -1,9 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, linkedSignal, signal } from '@angular/core';
 import { CountryListComponent } from '../../components/list/country-list.component';
 import { Region } from '../../interfaces/regions.interface';
 import { CountryService } from '../../services/country.service';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-by-region-page',
@@ -27,8 +28,15 @@ export class ByRegionPageComponent {
   //   this.selectedRegion.set(region);
   // }
 
-  selectedRegion = signal<Region | null>(null);
+  //Cambiamos de signal a linked signal, para hacerlo dinamico
+  selectedRegion = linkedSignal<Region>(() => this.queryParam ?? 'Americas');
   countryService = inject(CountryService);
+
+  //Para obtner datos a partir de la url
+  activatedRoute = inject(ActivatedRoute);
+  router = inject(Router);
+  queryParam =
+    (this.activatedRoute.snapshot.queryParamMap.get('region') as Region) ?? '';
 
   countryResource = rxResource({
     request: () => ({ query: this.selectedRegion() }),
@@ -36,6 +44,12 @@ export class ByRegionPageComponent {
       // Para ver que recibe la peticion
       // console.log('Request recibido:', request);
       if (!request.query) return of([]);
+
+      this.router.navigate(['/country/by-region'], {
+        queryParams: {
+          region: request.query,
+        },
+      });
       return this.countryService.searchByRegion(request.query);
     },
   });
